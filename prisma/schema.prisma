@@ -20,3 +20,12 @@ model Session {
   data  String @db.Text
   expiresAt DateTime
 }
+
+
+model User {
+  id String @id @default(uuid())
+  username String @unique
+  email String @unique
+  salt String
+  hash String
+}

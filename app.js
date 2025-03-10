@@ -5,10 +5,12 @@ const path = require('node:path');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('@prisma/client');
 const indexRouter = require('./routes/indexRoute');
-
+const registerRouter = require('./routes/registerRoute');
+const loginRouter = require('./routes/loginRoute');
 
 require('dotenv').config();
 
+require('./config/passport');
 
 const app = express();
 const assetPath = path.join(__dirname, 'public');
@@ -44,8 +46,28 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+app.use((req, res, next) => {
+    res.locals.isLogged = req.isAuthenticated();
+    res.locals.user = req.user;
+    next();
+})
+
+
 // Routes
 app.use('/', indexRouter);
+app.use('/register', registerRouter);
+app.use('/login', loginRouter);
+
+//Lot out
+app.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        return res.redirect('/')
+    }
+)
+})
 
 app.listen(3000, () => {
     console.log('http://localhost:3000');
