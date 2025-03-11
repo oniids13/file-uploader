@@ -20,7 +20,7 @@ const postLogin = (req, res, next) => {
                 console.error('Login Error: ', err);
                 return next(err);
             }
-            return res.redirect('/');
+            return res.redirect('/home');
         });
     })(req, res, next);
 };

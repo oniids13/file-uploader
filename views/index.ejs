@@ -2,12 +2,9 @@
 
 <main>
     <div class="container">
-        <% if(!user) { %>
-            <h1 class="p-2">Hello anonymous!</h1>
-         <%} else { %>
-            <h1 class="p-2">Hello <%= user.username %>!</h1>
-        
-         <% } %>
+            <h1 class="p-2">Welcome to File Drive!</h1>
+            <p>Save your files in the ☁</p>
+            <p><a href="/login">Log in</a> or <a href="/register">Sign-up</a> to continue.</p>
     </div>
 </main>
 

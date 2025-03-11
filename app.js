@@ -7,6 +7,7 @@ const { PrismaClient } = require('@prisma/client');
 const indexRouter = require('./routes/indexRoute');
 const registerRouter = require('./routes/registerRoute');
 const loginRouter = require('./routes/loginRoute');
+const homeRouter = require('./routes/homeRoute');
 
 require('dotenv').config();
 
@@ -57,6 +58,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
+app.use('/home', homeRouter);
 
 //Lot out
 app.get('/logout', (req, res) => {
