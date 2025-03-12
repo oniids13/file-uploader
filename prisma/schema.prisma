@@ -28,4 +28,12 @@ model User {
   email String @unique
   salt String
   hash String
+  folders Folder[]
+}
+
+model Folder {
+  id Int @id @default(autoincrement())
+  foldername String
+  userId String
+  user User @relation(fields: [userId], references: [id])
 }

@@ -7,7 +7,14 @@
             <p>What files do you want to upload today?</p>
             <form action="/home" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="fileName">Upload File</label>
+                    <select class="form-select" name="foldername">
+                        <option selected>Choose a Folder</option>
+                        <% folders.forEach(folder => {%>
+                            <option value="<%= folder.foldername %>"><%= folder.foldername %></option>
+                        <%}) %>
+
+                      </select>
+                    <label for="fileName" class="mt-3">Upload File</label>
                     <br />
                     <input type="file" class="form-control-file mt-3" name="upload-file" id="fileName">
                     <br />
@@ -15,6 +22,16 @@
                 </div>
             </form>
             <p class="mt-3"><%= file %></p>
+            <div>
+                <p>Or Create a new Folder</p>
+                <form action="/home/new-folder" method="POST">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="newFolder">
+                        <label for="floatingInput">New folder</label>
+                      </div>
+                      <button type="submit" class="btn btn-success">Create Folder</button>
+                </form>
+            </div>
         </div>
         <div class="col-9">
             <h2>Your current Files</h2>

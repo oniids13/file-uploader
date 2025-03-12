@@ -1,4 +1,4 @@
-const {registerUser} = require('../model/registerUser');
+const {registerUser} = require('../model/prismaQueries');
 const {body, validationResult} = require('express-validator');
 const {genPassword} = require('../lib/passwordUtil');
 
