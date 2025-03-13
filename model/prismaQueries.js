@@ -51,6 +51,7 @@ const getFolderByUser = async(userId) => {
             },
             select: {
                 foldername: true,
+                id: true,
             }
         })
         return folders;
@@ -60,4 +61,19 @@ const getFolderByUser = async(userId) => {
     }
 }
 
-module.exports = {registerUser, createFolder, getFolderByUser};
+const deleteFolderById = async(folderId) => {
+    try {
+        const folders = await prisma.folder.delete({
+            where: {
+                id: folderId
+            }
+        })
+        return folders
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
+
+module.exports = {registerUser, createFolder, getFolderByUser, deleteFolderById};

@@ -32,10 +32,44 @@
                       <button type="submit" class="btn btn-success">Create Folder</button>
                 </form>
             </div>
+            <div>
+                <h4>Manage Folders</h4>
+                <ul>
+                    <% folders.forEach(folder => {%>
+                        <li><%= folder.foldername %> <a href="/home/delete/<%= folder.id %>/<%= folder.foldername %>">❌</a></li>
+                    <%}) %>
+                </ul>
+            </div>
         </div>
         <div class="col-9">
-            <h2>Your current Files</h2>
-        </div>
+            <h2>Select a folder to view files</h2>
+            <form action="/home/files" id="folderForm" method="POST">
+                <div class="form-group">
+                    <select class="form-select" name="folders"  onchange="document.getElementById('folderForm').submit()">
+                        <option selected>Choose a Folder</option>
+                        <% folders.forEach(folder => {%>
+                            <option value="<%= folder.foldername %>"><%= folder.foldername %></option>
+                        <%}) %>
+                      </select>
+                </div>
+                <div>
+                    <% if (error) { %>
+                        <p><%= error %></p>
+                    <% } %>
+                    <% if (files && files.fileUrls && files.fileUrls.length > 0) { %>
+                        <ul>
+                            <h4><%= files.foldername %></h4>
+                            
+                            <% files.fileUrls.forEach(file => { %>
+                                <li><a href="/files/<%= user.id %>/<%= files.foldername %>/<%= file.split(/[\/\\]/).pop() %>" target="_blank">
+                                    <%= file.split(/[\/\\]/).pop() %>
+                                </a></li>
+                            <% }) %>
+                    </ul>
+                    <% } %>      
+                </div>
+            </form>
+            
     </div>
 </main>
 

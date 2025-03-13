@@ -18,6 +18,7 @@ const assetPath = path.join(__dirname, 'public');
 
 
 app.use(express.static(assetPath));
+app.use('/files', express.static(path.join(__dirname, 'public/files')));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.set('view engine', 'ejs')
