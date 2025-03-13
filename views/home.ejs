@@ -34,6 +34,9 @@
             </div>
             <div>
                 <h4>Manage Folders</h4>
+                <% if (folders.length === 0 ) { %>
+                    <p>You do not have any folders. Create one.</p>
+               <% } %>
                 <ul>
                     <% folders.forEach(folder => {%>
                         <li><%= folder.foldername %> <a href="/home/delete/<%= folder.id %>/<%= folder.foldername %>">❌</a></li>
@@ -53,17 +56,21 @@
                       </select>
                 </div>
                 <div>
+                    <% if (typeof(files) === 'string') { %>
+                        <h4><%= files %></h4>
+                    <% } else if (typeof(files) === 'object' && files !== null) { %>
+                        <h4><%= files.foldername %></h4>
+                    <% } %>
                     <% if (error) { %>
                         <p><%= error %></p>
                     <% } %>
+                    
                     <% if (files && files.fileUrls && files.fileUrls.length > 0) { %>
                         <ul>
-                            <h4><%= files.foldername %></h4>
-                            
                             <% files.fileUrls.forEach(file => { %>
                                 <li><a href="/files/<%= user.id %>/<%= files.foldername %>/<%= file.split(/[\/\\]/).pop() %>" target="_blank">
                                     <%= file.split(/[\/\\]/).pop() %>
-                                </a></li>
+                                </a> <a href="/home/delete?file=<%= encodeURIComponent(file) %>">❌</a></li>
                             <% }) %>
                     </ul>
                     <% } %>      

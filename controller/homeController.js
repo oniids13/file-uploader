@@ -49,9 +49,23 @@ const postUploadFile = async (req, res) => {
 }
 
 const postNewFolder = async (req, res) => {
-    const newFolder = req.body.newFolder;
-    createFolder(newFolder, req.user.id);
-    res.redirect('/home');
+    try {
+        const newFolder = req.body.newFolder;
+        const folderPath = path.join(__dirname, newFolder)
+
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath, {recursive: true});
+            console.log('Folder created successfully');
+        } else {
+            console.log('Folder already exist.');
+        }
+        createFolder(newFolder, req.user.id);
+        res.redirect('/home');
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+    
 }
 
 
@@ -62,7 +76,7 @@ const getFilesByFolder = async (req, res) => {
 
     fs.readdir(folderPath, (err, files) => {
         if (err) {
-            return res.render('home', {error: "Error reading files", files: [], folders, file: ''})
+            return res.render('home', {error: "No files yet. Upload a file to this folder.", files: folderName, folders, file: ''})
         }
 
         const fileUrls = files.map(file =>`${folderPath}/${file}`);
@@ -93,4 +107,26 @@ const deleteFolder = async (req, res) => {
     
 }
 
-module.exports = { getHomePage, upload, postUploadFile, postNewFolder, getFilesByFolder, deleteFolder };
+const deleteFile = async (req, res) => {
+    try {
+        const fileUrl = decodeURIComponent(req.query.file);
+        
+        if (fs.existsSync(fileUrl)) {
+            fs.unlinkSync(fileUrl);
+            console.log('File succesfully Deleted');
+        } else {
+            console.log('File not found');
+        }
+
+
+
+        return res.redirect('/home');
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+    
+    
+}
+
+module.exports = { getHomePage, upload, postUploadFile, postNewFolder, getFilesByFolder, deleteFolder, deleteFile };
