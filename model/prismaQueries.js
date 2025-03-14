@@ -68,6 +68,7 @@ const deleteFolderById = async(folderId) => {
                 id: folderId
             }
         })
+        console.log('Folder Successfully deleted.')
         return folders
     } catch (err) {
         console.error(err);

@@ -9,6 +9,7 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const folderName = req.body.foldername;
         const userId = req.user.id;
+    
         if (!folderName) {
             return cb(new Error('Choose a folder'), null);
         }
@@ -26,7 +27,7 @@ const storage = multer.diskStorage({
 });
 
 
-const upload = multer({storage:storage})
+const upload = multer({storage:storage}).single('upload-file')
 
 
 
@@ -39,13 +40,24 @@ const getHomePage = async (req, res) => {
 
 const postUploadFile = async (req, res) => {
     const folders =  await getFolderByUser(req.user.id);
-    if(!req.file) {
-        const noFile = 'No File Uploaded.'
-        return res.render('home', {file: noFile, folders: folders, error: null, files: []});
-    } else {
-        const file = 'File Uploaded!'
-        return res.render('home', {file, folders, error: null, files: []})
-    }
+    const folderName = req.body.foldername;
+
+    upload(req, res, (err) => {
+        if (err) {
+
+            return res.render('home', {file: "Please select a valid folder before uploading.", folders: folders, error: null, files: []})
+        } else {
+            
+            if(!req.file) {
+                const noFile = 'No File Uploaded.'
+                return res.render('home', {file: noFile, folders: folders, error: null, files: []});
+            } else {
+                const file = 'File Uploaded!'
+                return res.render('home', {file, folders, error: null, files: []})
+            }
+        }
+    })
+
 }
 
 const postNewFolder = async (req, res) => {
@@ -74,17 +86,28 @@ const getFilesByFolder = async (req, res) => {
     const folderName = req.body.folders;
     const folderPath = path.join(__dirname, `../public/files/${req.user.id}/${folderName}`);
 
-    fs.readdir(folderPath, (err, files) => {
-        if (err) {
+    fs.readdir(folderPath, async (err, files) => {
+        if (err || !files.length) {
             return res.render('home', {error: "No files yet. Upload a file to this folder.", files: folderName, folders, file: ''})
         }
 
-        const fileUrls = files.map(file =>`${folderPath}/${file}`);
+        const fileDetails = await Promise.all(
+            files.map(async (file) => {
+                const filePath = `${folderPath}/${file}`;
+                const stats = fs.statSync(filePath);
+                return {
+                    name: file,
+                    size: (stats.size / (1024 * 1024)).toFixed(2),
+                    createdAt: stats.birthtime.toISOString().split('T')[0],
+                }
+            })
+        )
+  
         const fileObj = {
             foldername: folderName,
-            fileUrls: fileUrls
-        }
-
+            details: fileDetails
+             }
+        console.log(fileObj)
         return res.render('home', {file: '', folders, error:null, files: fileObj})
     })
 }

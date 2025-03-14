@@ -29,3 +29,15 @@ footer {
     min-height: 90vh;
     padding: 20px;
 }
+
+a {
+    text-decoration: none;
+}
+
+.folder-selector {
+    color: navy;
+}
+
+.folder-chooser {
+    width: 20%;
+}

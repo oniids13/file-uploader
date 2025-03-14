@@ -4,11 +4,11 @@
     <div class="row home-container">
         <div class="col-3 side-bar">
             <h2>Hello <%= user.username %>!</h2>
-            <p>What files do you want to upload today?</p>
+            <p>What file do you want to upload today?</p>
             <form action="/home" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <select class="form-select" name="foldername">
-                        <option selected>Choose a Folder</option>
+                    <select class="form-select folder-selector" name="foldername">
+                        <option value="" selected disabled>Choose a Folder</option>
                         <% folders.forEach(folder => {%>
                             <option value="<%= folder.foldername %>"><%= folder.foldername %></option>
                         <%}) %>
@@ -18,10 +18,10 @@
                     <br />
                     <input type="file" class="form-control-file mt-3" name="upload-file" id="fileName">
                     <br />
-                    <button type="submit" class="btn btn-primary mt-3">Upload</button>
+                    <button type="submit" class="btn btn-primary mt-3" <%= folders.length === 0 ? 'disabled' : '' %>>Upload</button>
                 </div>
             </form>
-            <p class="mt-3"><%= file %></p>
+            <p class="mt-3" style="color: red;"><%= file %></p>
             <div>
                 <p>Or Create a new Folder</p>
                 <form action="/home/new-folder" method="POST">
@@ -33,13 +33,14 @@
                 </form>
             </div>
             <div>
+                <hr>
                 <h4>Manage Folders</h4>
                 <% if (folders.length === 0 ) { %>
                     <p>You do not have any folders. Create one.</p>
                <% } %>
                 <ul>
                     <% folders.forEach(folder => {%>
-                        <li><%= folder.foldername %> <a href="/home/delete/<%= folder.id %>/<%= folder.foldername %>">❌</a></li>
+                        <li><%= folder.foldername %> <a href="#" onclick="confirmDelete('<%= folder.foldername %>', <%= folder.id %>)">❌</a></li>
                     <%}) %>
                 </ul>
             </div>
@@ -48,7 +49,7 @@
             <h2>Select a folder to view files</h2>
             <form action="/home/files" id="folderForm" method="POST">
                 <div class="form-group">
-                    <select class="form-select" name="folders"  onchange="document.getElementById('folderForm').submit()">
+                    <select class="form-select folder-chooser" name="folders"  onchange="document.getElementById('folderForm').submit()">
                         <option selected>Choose a Folder</option>
                         <% folders.forEach(folder => {%>
                             <option value="<%= folder.foldername %>"><%= folder.foldername %></option>
@@ -59,18 +60,22 @@
                     <% if (typeof(files) === 'string') { %>
                         <h4><%= files %></h4>
                     <% } else if (typeof(files) === 'object' && files !== null) { %>
-                        <h4><%= files.foldername %></h4>
+                        <h4 class="mt-3"><%= files.foldername %></h4>
                     <% } %>
                     <% if (error) { %>
-                        <p><%= error %></p>
+                        <p style="color: red;"><%= error %></p>
                     <% } %>
                     
-                    <% if (files && files.fileUrls && files.fileUrls.length > 0) { %>
+                    <% if (files && files.details && files.details.length > 0) { %>
                         <ul>
-                            <% files.fileUrls.forEach(file => { %>
-                                <li><a href="/files/<%= user.id %>/<%= files.foldername %>/<%= file.split(/[\/\\]/).pop() %>" target="_blank">
-                                    <%= file.split(/[\/\\]/).pop() %>
-                                </a> <a href="/home/delete?file=<%= encodeURIComponent(file) %>">❌</a></li>
+                            <% files.details.forEach(file => { %>
+                                <li><a href="/files/<%= user.id %>/<%= files.foldername %>/<%= file.name %>" target="_blank">
+                                    <%= file.name %>
+                                </a> <a href="/home/delete?file=<%= encodeURIComponent(file) %>">❌</a>
+                                <br>
+                                <small>Size: <%= file.size %>MB</small>
+                                <small>Date Uploaded: <%= file.createdAt %></small>
+                                </li>
                             <% }) %>
                     </ul>
                     <% } %>      
@@ -80,6 +85,15 @@
     </div>
 </main>
 
+<script>
+    function confirmDelete(foldername, folderId) {
+        const isConfirmed = confirm(`Are you sure you want to delete the folder "${foldername}"? This will delete all the files inside of it.`);
+        if (isConfirmed) {
+            // Redirect to delete route
+            window.location.href = `/home/delete/${folderId}/${encodeURIComponent(foldername)}`;
+        }
+    }
+</script>
 
 
 
