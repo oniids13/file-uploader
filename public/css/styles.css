@@ -16,12 +16,15 @@ main{
     flex: 1;
 }
 
+header {
+    padding: 20px;
+}
+
 footer {
     text-align: center;
 }
 .side-bar {
     max-height: 100%;
-    border-right: 1px solid black;
     padding: 10px;
 }
 
@@ -40,4 +43,19 @@ a {
 
 .folder-chooser {
     width: 20%;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    min-width: 20%;
+    border: 1px solid black;
+    padding: 20px;
+    background-color: #E4EFE7;
+    text-align: center;
 }
